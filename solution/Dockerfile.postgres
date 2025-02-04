@@ -1,0 +1,10 @@
+FROM postgres:14
+
+WORKDIR /docker-entrypoint-initdb.d
+
+COPY ./init-scripts/init-multiple-dbs.sh /docker-entrypoint-initdb.d/
+
+RUN chmod +x /docker-entrypoint-initdb.d/init-multiple-dbs.sh
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["postgres"]

@@ -99,6 +99,7 @@ solution
 | notifier  | 9030   |
 | postgres  | 9040   |
 | redis     | 9050   |
+| auth      | 9011   |
 ```
 
 ## Endpoints Principales

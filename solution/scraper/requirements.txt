@@ -19,3 +19,11 @@ starlette==0.38.4
 tomli==2.0.1
 typing_extensions==4.12.2
 uvicorn==0.30.6
+requests==2.31.0
+PyJWT==2.6.0
+SQLAlchemy==1.4.46
+psycopg2-binary==2.9.6
+alembic==1.10.2
+celery==5.2.7
+redis==4.5.4
+python-multipart

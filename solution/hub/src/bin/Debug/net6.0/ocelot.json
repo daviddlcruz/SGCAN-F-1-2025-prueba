@@ -1,0 +1,39 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/auth/register",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "f1_auth", "Port": 5001 }
+      ],
+      "UpstreamPathTemplate": "/register",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/auth/login",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "f1_auth", "Port": 5001 }
+      ],
+      "UpstreamPathTemplate": "/login",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/scraper/upload",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "f1_scraper", "Port": 8000 }
+      ],
+      "UpstreamPathTemplate": "/upload",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AllowContentStreaming": true
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:9010",
+    "UpstreamHeaderTransform": {
+      "Access-Control-Allow-Origin": "http://localhost:5173,http://localhost:9999"
+    }
+  }
+
+}

@@ -6,14 +6,15 @@ services:
       context: ./react
       dockerfile: Dockerfile
     ports:
-      - "9999:3000"
+      - "9999:5173"
     volumes:
-      - ./react:/app
+      - ./react/app:/app
       - /app/node_modules
       - /app/.next
     environment:
       - NODE_ENV=development
-    command: sh -c "pnpm install && pnpm dev"
+      - VITE_HOST=0.0.0.0
+    command: sh -c "pnpm install && pnpm dev --host 0.0.0.0"
     networks:
       - f1_network
 
@@ -27,12 +28,27 @@ services:
     volumes:
       - ./hub/src:/app/src
       - /app/bin
-      - /app/obj
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Host=f1_postgres;Database=f1_database;Username=f1_sgcan;Password=f1_sgcan123456
+    env_file:
+      - ./envs/.env.hub
     depends_on:
       - postgres
+    networks:
+      - f1_network
+  
+  auth:
+    container_name: f1_auth
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    ports:
+      - "9011:5001"
+    volumes:
+      - ./auth/src:/app/src
+    env_file:
+      - ./envs/.env.hub
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
       - f1_network
 
@@ -43,17 +59,27 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9020:8000"
+    environment:
+      - DATABASE_URL=postgresql://f1_sgcan:f1_sgcan123456@postgres:5432/scraper_db
+      - REDIS_URL=redis://redis:6379/0
     volumes:
       - ./scraper:/app
+      - ./files:/app/files
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      auth:
+        condition: service_started
     networks:
       - f1_network
 
   postgres:
-    image: postgres:14
     container_name: f1_postgres
+    build: 
+      context: .
+      dockerfile: Dockerfile.postgres
     hostname: f1_postgres
     volumes:
       - ./volumes/postgres_data:/var/lib/postgresql/data
@@ -64,6 +90,11 @@ services:
     ports:
       - "9040:5432"
     restart: "always"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U f1_sgcan -d auth_db"]
+      interval: 5s
+      retries: 5
+      timeout: 5s
 
   redis:
     image: redis:6.2-alpine
