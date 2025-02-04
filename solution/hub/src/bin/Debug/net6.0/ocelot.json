@@ -27,6 +27,24 @@
       "UpstreamPathTemplate": "/upload",
       "UpstreamHttpMethod": [ "POST" ],
       "AllowContentStreaming": true
+    },
+    {
+      "DownstreamPathTemplate": "/api/scraper/files",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "f1_scraper", "Port": 8000 }
+      ],
+      "UpstreamPathTemplate": "/files",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/scraper/files/{job_id}/links",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "f1_scraper", "Port": 8000 }
+      ],
+      "UpstreamPathTemplate": "/files/{job_id}/links",
+      "UpstreamHttpMethod": [ "GET" ]
     }
   ],
   "GlobalConfiguration": {
